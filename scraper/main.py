@@ -3,11 +3,15 @@ import time
 from typing import List
 
 import pandas as pd
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
+load_dotenv()
+
+REMOTE_URL = os.getenv("SELENIUM_REMOTE_URL")
 BASE_URL = "https://store.creality.com"
 SCANNERS_PATH = "/collections/scanners"
 PRODUCT_TAG_SELECTOR = "a.item-img"
@@ -26,9 +30,7 @@ def get_driver() -> WebDriver:
         }
         options.add_experimental_option("prefs", prefs)
 
-        driver = webdriver.Remote(
-            command_executor="http://chrome:4444/wd/hub", options=options
-        )
+        driver = webdriver.Remote(command_executor=REMOTE_URL, options=options)
         return driver
     except Exception as e:
         print(f"Failed to setup driver: {e}")
