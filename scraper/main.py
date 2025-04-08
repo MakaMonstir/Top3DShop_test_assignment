@@ -58,6 +58,27 @@ def get_links_from_elements(elements: List[WebElement]) -> List[str]:
     ]
     return links
 
+def parse_item_page(
+        driver: WebDriver, path: str, selectors: Dict[str, str]
+) -> Dict[str, str]:
+
+    driver.get(BASE_URL + path)
+
+    records = {}
+    for key, selector in selectors.items():
+        try:
+            element = driver.find_element(SELECTOR, selector)
+            text = element.text
+
+        except NoSuchElementException:
+            print(f'No element found by given selector "{selector}" '
+                  f'on path "{path}". Skipping.')
+            text = None
+
+        records[key] = text
+
+    return records
+
 
 def main():
     driver = get_driver()
