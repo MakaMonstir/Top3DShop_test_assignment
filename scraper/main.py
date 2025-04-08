@@ -20,6 +20,16 @@ def find_all_elements_by_selector(
     elements = driver.find_elements(By.CSS_SELECTOR, selector)
     return elements
 
+
+def get_links_from_elements(elements: List[WebElement]) -> List[str]:
+    links = [
+        elem.get_attribute("href")
+        for elem in elements
+        if elem.get_attribute("href") is not None
+    ]
+    return links
+
+
 def main():
     driver = get_driver()
     test_call(driver=driver)
