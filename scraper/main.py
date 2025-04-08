@@ -16,11 +16,10 @@ REMOTE_URL = os.getenv("SELENIUM_REMOTE_URL")
 BASE_URL = "https://store.creality.com"
 SCANNERS_PATH = "/collections/scanners"
 SELECTOR = By.CSS_SELECTOR
-PRODUCT_TAG_SELECTOR = "a.item-img"
-PROUDCT_NAME_SELECTOR = "div.product-main > h1"
-PROUDCT_PRICE_SELECTOR = "div.product-price span.price"
-PROUDCT_SHIPPING_DATE_SELECTOR = "div.product-info " \
-                                 "div.product-info-item-content > span"
+PRODUCT_TAG_SELECTOR = "body > main > div > div.collection-body > div > div.filters-content > div.products a.item-img"
+PROUDCT_NAME_SELECTOR = "body > main > div.product > div.container > div.product-main > h1"
+PROUDCT_PRICE_SELECTOR = "body > main > div.product > div.container > div.product-main > div.product-price > div > span.price"
+PROUDCT_SHIPPING_DATE_SELECTOR = "body > main > div.product > div.container > div.product-main > div.product-info div.product-info-item-content > span"
 
 
 def get_driver() -> WebDriver:
@@ -60,20 +59,18 @@ def get_links_from_elements(elements: List[WebElement]) -> List[str]:
 
 
 def parse_item_page(
-        driver: WebDriver, path: str, selectors: Dict[str, str]
+    driver: WebDriver, link: str, selectors: Dict[str, str]
 ) -> Dict[str, str]:
 
-    driver.get(BASE_URL + path)
+    driver.get(link)
 
     records = {}
     for key, selector in selectors.items():
         try:
-            element = driver.find_element(SELECTOR, selector)
-            text = element.text
-
+            text = driver.find_element(SELECTOR, selector).text
         except NoSuchElementException:
             print(f'No element found by given selector "{selector}" '
-                  f'on path "{path}". Skipping.')
+                  f'on path "{link}". Skipping.')
             text = None
 
         records[key] = text
@@ -92,16 +89,20 @@ def main():
 
     links = get_links_from_elements(web_elements)
 
+    driver.quit()
+
     selectors = {
         'name': PROUDCT_NAME_SELECTOR,
         'price': PROUDCT_PRICE_SELECTOR,
         'shipping_date': PROUDCT_SHIPPING_DATE_SELECTOR,
     }
     for link in links:
-        data = parse_item_page(driver, SCANNERS_PATH, selectors)
+        driver = get_driver()
+        data = parse_item_page(driver, link, selectors)
+        driver.quit()
         print(data)
 
 
 if __name__ == "__main__":
-    time.sleep(float(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
+    time.sleep(int(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
     main()
