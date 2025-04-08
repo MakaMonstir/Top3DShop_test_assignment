@@ -12,6 +12,29 @@ BASE_URL = "https://store.creality.com"
 SCANNERS_PATH = "/collections/scanners"
 PRODUCT_TAG_SELECTOR = "a.item-img"
 
+
+def get_driver() -> WebDriver:
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("window-size=800x600")
+
+        prefs = {
+            "profile.managed_default_content_settings.images": 2,
+            "profile.managed_default_content_settings.fonts": 2,
+            "profile.managed_default_content_settings.stylesheets": 1,
+        }
+        options.add_experimental_option("prefs", prefs)
+
+        driver = webdriver.Remote(
+            command_executor="http://chrome:4444/wd/hub", options=options
+        )
+        return driver
+    except Exception as e:
+        print(f"Failed to setup driver: {e}")
+        raise
+
+
 def find_all_elements_by_selector(
     driver: WebDriver, base_url: str, path: str, selector: str
 ) -> List[WebElement]:
