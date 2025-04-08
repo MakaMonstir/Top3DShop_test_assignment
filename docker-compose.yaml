@@ -5,6 +5,8 @@ services:
       - ./scraper:/app
     depends_on:
       - chrome
+    environment:
+      - PYTHONUNBUFFERED=1
 
   chrome:
     image: selenium/standalone-chromium:latest
