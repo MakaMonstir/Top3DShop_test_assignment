@@ -6,7 +6,7 @@ from selenium import webdriver
 
 driver = webdriver.Remote(
     command_executor="http://chrome:4444/wd/hub",
-    options=webdriver.ChromiumOptions()
+    options=webdriver.ChromeOptions()
 )
 
 
