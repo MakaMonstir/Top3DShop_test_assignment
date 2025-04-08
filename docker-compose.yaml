@@ -5,12 +5,9 @@ services:
       - ./scraper:/app
     depends_on:
       - chrome
-    environment:
-      - SELENIUM_REMOTE_URL=http://chrome:444/wd/hub
-  
+
   chrome:
     image: selenium/standalone-chromium:latest
     ports:
       - "4444:4444"
     shm_size: 2gb
-    

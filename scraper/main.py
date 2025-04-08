@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-load_dotenv()
+load_dotenv(dotenv_path=".env")
 
 REMOTE_URL = os.getenv("SELENIUM_REMOTE_URL")
 BASE_URL = "https://store.creality.com"
@@ -35,7 +35,6 @@ def get_driver() -> WebDriver:
             "profile.managed_default_content_settings.stylesheets": 1,
         }
         options.add_experimental_option("prefs", prefs)
-
         driver = webdriver.Remote(command_executor=REMOTE_URL, options=options)
         return driver
     except Exception as e:
@@ -97,5 +96,5 @@ def main():
     
 
 if __name__ == "__main__":
-    time.sleep(5)  # wait until Selenium Standalone started
+    time.sleep(float(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
     main()
