@@ -14,7 +14,12 @@ load_dotenv()
 REMOTE_URL = os.getenv("SELENIUM_REMOTE_URL")
 BASE_URL = "https://store.creality.com"
 SCANNERS_PATH = "/collections/scanners"
+SELECTOR = By.CSS_SELECTOR
 PRODUCT_TAG_SELECTOR = "a.item-img"
+PROUDCT_NAME_SELECTOR = "div.product-main > h1"
+PROUDCT_PRICE_SELECTOR = "div.product-price span.price"
+PROUDCT_SHIPPING_DATE_SELECTOR = "div.product-info " \
+                                 "div.product-info-item-content > span"
 
 
 def get_driver() -> WebDriver:
