@@ -4,6 +4,9 @@ import time
 import pandas as pd
 
 from selenium import webdriver
+BASE_URL = "https://store.creality.com"
+SCANNERS_PATH = "/collections/scanners"
+PRODUCT_TAG_SELECTOR = "a.item-img"
 
 
 def main():
