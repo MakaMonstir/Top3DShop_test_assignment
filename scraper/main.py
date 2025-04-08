@@ -3,11 +3,11 @@ import time
 from typing import List
 
 import pandas as pd
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+
 BASE_URL = "https://store.creality.com"
 SCANNERS_PATH = "/collections/scanners"
 PRODUCT_TAG_SELECTOR = "a.item-img"
@@ -55,23 +55,19 @@ def get_links_from_elements(elements: List[WebElement]) -> List[str]:
 
 def main():
     driver = get_driver()
-    test_call(driver=driver)
-    pass
 
-
-def test_call(driver):
-    driver.get("https://store.creality.com/collections/scanners")
-    assert "3D" in driver.title
-
-
-def get_driver() -> webdriver.Remote:
-    driver = webdriver.Remote(
-        command_executor="http://chrome:4444/wd/hub",
-        options=webdriver.ChromeOptions()
+    web_elements = find_all_elements_by_selector(
+        driver=driver,
+        base_url=BASE_URL,
+        path=SCANNERS_PATH,
+        selector=PRODUCT_TAG_SELECTOR,
     )
-    return driver
+
+    links = get_links_from_elements(web_elements)
+
+    print(*links)
 
 
 if __name__ == "__main__":
-    time.sleep(5)
+    time.sleep(5)  # wait until Selenium Standalone started
     main()
