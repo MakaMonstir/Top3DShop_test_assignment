@@ -86,7 +86,6 @@ def main():
 
     web_elements = find_all_elements_by_selector(
         driver=driver,
-        base_url=BASE_URL,
         path=SCANNERS_PATH,
         selector=PRODUCT_TAG_SELECTOR,
     )
