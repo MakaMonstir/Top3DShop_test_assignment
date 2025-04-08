@@ -58,6 +58,7 @@ def get_links_from_elements(elements: List[WebElement]) -> List[str]:
     ]
     return links
 
+
 def parse_item_page(
         driver: WebDriver, path: str, selectors: Dict[str, str]
 ) -> Dict[str, str]:
@@ -92,8 +93,7 @@ def main():
 
     links = get_links_from_elements(web_elements)
 
-    print(*links)
-
+    
 
 if __name__ == "__main__":
     time.sleep(5)  # wait until Selenium Standalone started
