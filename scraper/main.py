@@ -4,11 +4,13 @@ from typing import Dict, List
 
 import pandas as pd
 from dotenv import load_dotenv
+from safe_web_element import SafeWebElement, SafeWebElements
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 load_dotenv(dotenv_path=".env")
 
@@ -41,21 +43,16 @@ def get_driver() -> WebDriver:
         raise
 
 
-def find_all_elements_by_selector(
+def find_all_links_by_selector(
     driver: WebDriver, path: str, selector: str
-) -> List[WebElement]:
+) -> List[str]:
     driver.get(BASE_URL + path)
-    elements = driver.find_elements(SELECTOR, selector)
-    return elements
-
-
-def get_links_from_elements(elements: List[WebElement]) -> List[str]:
-    links = [
-        elem.get_attribute("href")
-        for elem in elements
-        if elem.get_attribute("href") is not None
+    safe_elements = SafeWebElements(driver, SELECTOR, selector)
+    return [
+        href
+        for href in map(lambda e: e.get_attribute('href'), safe_elements.all())
+        if href is not None
     ]
-    return links
 
 
 def parse_item_page(
@@ -67,7 +64,11 @@ def parse_item_page(
     records = {}
     for key, selector in selectors.items():
         try:
-            text = driver.find_element(SELECTOR, selector).text
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((SELECTOR, selector))
+            )
+            element = SafeWebElement(driver, SELECTOR, selector)
+            text = element.text()
         except NoSuchElementException:
             print(f'No element found by given selector "{selector}" '
                   f'on path "{link}". Skipping.')
@@ -81,15 +82,11 @@ def parse_item_page(
 def main():
     driver = get_driver()
 
-    web_elements = find_all_elements_by_selector(
+    links = find_all_links_by_selector(
         driver=driver,
         path=SCANNERS_PATH,
         selector=PRODUCT_TAG_SELECTOR,
     )
-
-    links = get_links_from_elements(web_elements)
-
-    driver.quit()
 
     selectors = {
         'name': PROUDCT_NAME_SELECTOR,
@@ -97,11 +94,10 @@ def main():
         'shipping_date': PROUDCT_SHIPPING_DATE_SELECTOR,
     }
     for link in links:
-        driver = get_driver()
         data = parse_item_page(driver, link, selectors)
-        driver.quit()
         print(data)
 
+    driver.quit()
 
 if __name__ == "__main__":
     time.sleep(int(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
