@@ -93,7 +93,15 @@ def main():
 
     links = get_links_from_elements(web_elements)
 
-    
+    selectors = {
+        'name': PROUDCT_NAME_SELECTOR,
+        'price': PROUDCT_PRICE_SELECTOR,
+        'shipping_date': PROUDCT_SHIPPING_DATE_SELECTOR,
+    }
+    for link in links:
+        data = parse_item_page(driver, SCANNERS_PATH, selectors)
+        print(data)
+
 
 if __name__ == "__main__":
     time.sleep(float(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
