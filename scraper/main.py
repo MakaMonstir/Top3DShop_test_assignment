@@ -11,7 +11,13 @@ driver = webdriver.Remote(
 
 
 def main():
+    test_call()
     pass
+
+
+def test_call(driver):
+    driver.get("https://store.creality.com/collections/scanners")
+    assert "3D" in driver.title
 
 
 if __name__ == "__main__":
