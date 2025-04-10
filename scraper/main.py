@@ -70,8 +70,13 @@ def parse_item_page(
             element = SafeWebElement(driver, SELECTOR, selector)
             text = element.text()
         except NoSuchElementException:
-            print(f'No element found by given selector "{selector}" '
+            print(f'No element found by given selector "{key}" '
                   f'on path "{link}". Skipping.')
+            text = None
+
+        except Exception as e:
+            print(f'Warning: Faild to extract data due {e}. '
+                  f'Context: "{key}" on path "{link}". Skipping.')
             text = None
 
         records[key] = text
