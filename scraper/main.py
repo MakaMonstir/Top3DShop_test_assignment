@@ -18,10 +18,10 @@ REMOTE_URL = os.getenv("SELENIUM_REMOTE_URL")
 BASE_URL = "https://store.creality.com"
 SCANNERS_PATH = "/collections/scanners"
 SELECTOR = By.CSS_SELECTOR
-PRODUCT_TAG_SELECTOR = "body > main > div > div.collection-body > div > div.filters-content > div.products a.item-img"
-PROUDCT_NAME_SELECTOR = "body > main > div.product > div.container > div.product-main > h1"
-PROUDCT_PRICE_SELECTOR = "body > main > div.product > div.container > div.product-main > div.product-price > div > span.price"
-PROUDCT_SHIPPING_DATE_SELECTOR = "body > main > div.product > div.container > div.product-main > div.product-info div.product-info-item-content > span"
+PRODUCT_TAG_SELECTOR = "body > main > div > div.collection-body > div > div.filters-content > div.products a.item-img"  # noqa
+PROUDCT_NAME_SELECTOR = "body > main > div.product > div.container > div.product-main > h1"  # noqa
+PROUDCT_PRICE_SELECTOR = "body > main > div.product > div.container > div.product-main > div.product-price > div > span.price"  # noqa
+PROUDCT_SHIPPING_DATE_SELECTOR = "body > main > div.product > div.container > div.product-main > div.product-info div.product-info-item-content > span"  # noqa
 
 
 def get_driver() -> WebDriver:
@@ -85,13 +85,22 @@ def parse_item_page(
 
 
 def main():
+    print('Scraper started')
+    print('Waiting for driver connection set...')
+
     driver = get_driver()
+
+    print('Connection to driver has been successfully set.')
+    print('Execute collection script')
 
     links = find_all_links_by_selector(
         driver=driver,
         path=SCANNERS_PATH,
         selector=PRODUCT_TAG_SELECTOR,
     )
+
+    print('Links has been collected')
+    print('Starting to collect product info')
 
     selectors = {
         'name': PROUDCT_NAME_SELECTOR,
@@ -105,13 +114,17 @@ def main():
         data['link'] = link
         rows.append(data)
 
-        print(data)
+        print(f'Product "{data['name']}" done.')
 
+    print('Done! Closing driver session..')
     driver.quit()
 
     df = pd.DataFrame(rows)
     df.to_csv("sacnners.csv", index=False)
 
+    print('Data is stored in "sacnners.csv".')
+
+
 if __name__ == "__main__":
-    time.sleep(int(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
+    time.sleep(int(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started  # noqa
     main()
