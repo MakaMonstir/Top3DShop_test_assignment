@@ -98,11 +98,19 @@ def main():
         'price': PROUDCT_PRICE_SELECTOR,
         'shipping_date': PROUDCT_SHIPPING_DATE_SELECTOR,
     }
+
+    rows = []
     for link in links:
         data = parse_item_page(driver, link, selectors)
+        data['link'] = link
+        rows.append(data)
+
         print(data)
 
     driver.quit()
+
+    df = pd.DataFrame(rows)
+    df.to_csv("sacnners.csv", index=False)
 
 if __name__ == "__main__":
     time.sleep(int(os.getenv("TIME_TO_SLEEP")))  # wait until Selenium Standalone started
